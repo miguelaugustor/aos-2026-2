@@ -1,5 +1,9 @@
+import getSetorModel from "./setor.js";
+import getCursoModel from "./curso.js";
+import getInscricaoModel from "./inscricao.js";
 import Sequelize from "sequelize";
 import pg from "pg";
+
 
 import getUserModel from "./user.js";
 import getMessageModel from "./message.js";
@@ -18,6 +22,9 @@ const models = {
   User: getUserModel(sequelize, Sequelize),
   Message: getMessageModel(sequelize, Sequelize),
   RefreshToken: getRefreshTokenModel(sequelize, Sequelize),
+  Setor: getSetorModel(sequelize, Sequelize),
+  Curso: getCursoModel(sequelize, Sequelize),
+  Inscricao: getInscricaoModel(sequelize, Sequelize),
 };
 
 Object.keys(models).forEach((key) => {
@@ -29,3 +36,4 @@ Object.keys(models).forEach((key) => {
 export { sequelize };
 
 export default models;
+

@@ -50,11 +50,18 @@ const getUserModel = (sequelize, { DataTypes }) => {
       allowNull: false,
       defaultValue: "USER",
     },
+    setorId: {
+      type: DataTypes.UUID,
+      allowNull: true,
+    },
   });
 
-  User.associate = (models) => {
+   User.associate = (models) => {
     User.hasMany(models.Message, { foreignKey: "userId", onDelete: "CASCADE" });
     User.hasMany(models.RefreshToken, { foreignKey: "userId", onDelete: "CASCADE" });
+    User.belongsTo(models.Setor, { foreignKey: "setorId" });
+    User.hasMany(models.Inscricao, { foreignKey: "userId", onDelete: "CASCADE" });
+    User.belongsToMany(models.Curso, { through: models.Inscricao, foreignKey: "userId", otherKey: "cursoId" });
   };
 
   User.beforeCreate(async (user) => {
