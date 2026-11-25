@@ -2,9 +2,21 @@ import models, { sequelize } from "../models/index.js";
 import sessionService from "./sessionService.js";
 import { AppError, findPaginated } from "../utils/index.js";
 
-const getAllUsers = async ({ page = 1, limit = 10, order = "DESC" } = {}) => {
-  return await findPaginated(models.User, { page, limit, order });
-};
+const getAllUsers = async ({ page = 1, limit = 10, order = "DESC", q } = {}) =>
+  await findPaginated(models.User, {
+    page,
+    limit,
+    order,
+    include: [{ model: models.Setor }],
+    ...(q && {
+      where: {
+        [Op.or]: [
+          { username: { [Op.iLike]: `%${q}%` } },
+          { email: { [Op.iLike]: `%${q}%` } },
+        ],
+      },
+    }),
+  });
 
 const getUserById = async (id, options = {}) => {
   const queryOptions = {
@@ -57,7 +69,7 @@ const createUser = async (
  */
 const updateUser = async (
   id,
-  { username, email, password, role },
+  { username, email, password, role, setorId },
   actor = null
 ) => {
   if (role !== undefined && actor?.role !== "ADMIN") {
@@ -84,6 +96,7 @@ const updateUser = async (
         ...(email !== undefined && { email }),
         ...(password !== undefined && { password }),
         ...(role !== undefined && { role }),
+        ...(setorId !== undefined && { setorId }),
       },
       { transaction: t }
     );
